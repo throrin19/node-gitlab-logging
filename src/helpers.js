@@ -116,7 +116,7 @@ function __create(gitlab_client, options, issue_data) {
         title: issue_data.title,
         description: issue_data.description,
         assignee_id: options.assignee_id,
-        labels: 'node, error, bug'
+        labels: 'error, bug, '+options.environment
     }, function(error, row) {
         __handle_create(error, row);
     });
@@ -204,7 +204,7 @@ exports.__engage_advance = function(gitlab_client, params, options) {
         var checksum = __checksum(params.message);
 
         // Process issue data
-        var issue_data = __data(params, options, checksum);
+        var issue_data = __advance_data(params);
 
         // Check if issue already exists
         gitlab_client.issues.list({
