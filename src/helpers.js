@@ -145,7 +145,7 @@ function __advance_data(params) {
 
     content += "# Stacktrace\n\n";
     content += "```javascript\n";
-    content += JSON.stringify(params.stacktrace, undefined, 2)+'\n';
+    content += params.stacktrace+'\n';
     content += "```\n\n";
 
     if(params.vars) {
