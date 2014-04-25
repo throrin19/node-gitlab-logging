@@ -4,7 +4,7 @@
  * Copyright 2014, Valerian Saliou
  * Author: Valerian Saliou <valerian@valeriansaliou.name>
  */
-
+var _ = require('underscore');
 
 const NS = 'gitlab-logging/helpers';
 
@@ -138,6 +138,38 @@ function __handle_create(error, row) {
     }
 }
 
+function __advance_data(params) {
+    const FN = '[' + NS + '.__data' + ']';
+
+    var content = "+   URL : "+params.url+"\n\n";
+
+    content += "# Stacktrace\n\n";
+    content += "```javascript\n";
+    content += JSON.stringify(params.stacktrace, undefined, 2);
+    content += "```\n\n";
+
+    if(params.vars) {
+        content += "# Variables\n\n";
+        _.each(params.vars, function(value, key){
+            content += "## "+key+"\n\n";
+            content += "```javascript\n";
+            content += JSON.stringify(value, undefined, 2);
+            content += "```\n\n";
+        });
+    }
+
+    var description = {
+        head: 'Note: this issue has been automatically opened.',
+        trace: content
+    };
+
+    var data = {};
+
+    data.title = ('[ERROR] '+params.message);
+    data.description = description.head + '\n\n---\n\n' + description.trace;
+
+    return data;
+}
 
 // Engages the issue opening process
 exports.__engage = function(gitlab_client, error, options) {
@@ -151,6 +183,28 @@ exports.__engage = function(gitlab_client, error, options) {
 
         // Process issue data
         var issue_data = __data(error, options, checksum);
+
+        // Check if issue already exists
+        gitlab_client.issues.list({
+            id: options.project_id
+        }, function(error, issues) {
+            __handle_list(gitlab_client, options, error, issues, issue_data);
+        });
+    } catch(_e) {
+        log.error(FN, _e);
+    }
+};
+
+exports.__engage_advance = function(gitlab_client, params, options) {
+    const FN = '[' + NS + '.__engage' + ']';
+
+    try {
+        log.info(FN, 'Engaging GitLab issue opening process...');
+
+        var checksum = __checksum(params.message);
+
+        // Process issue data
+        var issue_data = __data(params, options, checksum);
 
         // Check if issue already exists
         gitlab_client.issues.list({

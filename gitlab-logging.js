@@ -26,7 +26,7 @@ var OPTIONS = null;
 // Configures options
 exports.configure = function(options) {
     if(options.token === undefined || options.host === undefined ||
-       options.project_id === undefined || options.assignee_id === undefined) {
+       options.project_id === undefined) {
         log.error(FN, 'A required argument is missing, not saving configuration');
         return false;
     }
@@ -63,5 +63,23 @@ exports.handle = function(error) {
 
     if(gitlab_client !== null && error) {
         helpers.__engage(gitlab_client, error, OPTIONS);
+    }
+};
+
+exports.handle_advance = function advance_handle(params) {
+    const FN = '[' + NS + '.handle' + ']';
+
+    if(OPTIONS === null) {
+        log.error(FN, 'Please configure the module before using it! Usage: configure(options)');
+        return;
+    }
+
+    const gitlab_client = node_gitlab.create({
+        api: url.resolve(OPTIONS.host, '/api/v3'),
+        privateToken: OPTIONS.token
+    });
+
+    if(gitlab_client !== null && error) {
+        helpers.__engage_advance(gitlab_client, params, OPTIONS);
     }
 };
