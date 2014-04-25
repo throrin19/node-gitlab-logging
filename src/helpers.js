@@ -141,12 +141,16 @@ function __handle_create(error, row) {
 function __advance_data(params) {
     const FN = '[' + NS + '.__data' + ']';
 
-    var content = "+   URL : "+params.url+"\n\n";
+    var content = "";
+
+    if (params.url) {
+        content += "+   URL : "+params.url+"\n\n";
+    }
 
     content += "# Stacktrace\n\n";
     content += "```javascript\n";
     content += params.stacktrace+'\n';
-    content += "```\n\n";
+    content += "```\n";
 
     if(params.vars) {
         content += "# Variables\n\n";
@@ -154,7 +158,7 @@ function __advance_data(params) {
             content += "## "+key+"\n\n";
             content += "```javascript\n";
             content += JSON.stringify(value, undefined, 2)+'\n';
-            content += "```\n\n";
+            content += "```\n";
         });
     }
 
