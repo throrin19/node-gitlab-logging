@@ -62,7 +62,7 @@ function __handle_list(gitlab_client, options, error, issues, issue_data) {
 
             if(existing_issue_id !== null) {
                 if(existing_issue_state !== 'opened') {
-                    __reopen(gitlab_client, options, existing_issue_id);
+                    __reopen(gitlab_client, options, existing_issue_id, issue_data);
                 } else {
                     log.info(FN, 'Issue exists and is already opened, not re-opening');
                 }
@@ -77,13 +77,13 @@ function __handle_list(gitlab_client, options, error, issues, issue_data) {
 
 
 // Reopens a closed issue
-function __reopen(gitlab_client, options, existing_issue_id) {
+function __reopen(gitlab_client, options, existing_issue_id, issue_data) {
     const FN = '[' + NS + '.__reopen' + ']';
 
     gitlab_client.issues.update({
         id: options.project_id,
         issue_id: existing_issue_id,
-        description: 'Reopened from backend because the exception happened once again.',
+        description: issue_data.description,
         state_event: 'reopen'
     }, function(error, row) {
         __handle_reopen(error, row);
