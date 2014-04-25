@@ -79,7 +79,7 @@ exports.handle_advance = function advance_handle(params) {
         privateToken: OPTIONS.token
     });
 
-    if(gitlab_client !== null && error) {
+    if(gitlab_client !== null && params) {
         helpers.__engage_advance(gitlab_client, params, OPTIONS);
     }
 };
