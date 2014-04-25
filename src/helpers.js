@@ -145,7 +145,7 @@ function __advance_data(params) {
 
     content += "# Stacktrace\n\n";
     content += "```javascript\n";
-    content += JSON.stringify(params.stacktrace, undefined, 2);
+    content += JSON.stringify(params.stacktrace, undefined, 2)+'\n';
     content += "```\n\n";
 
     if(params.vars) {
@@ -153,7 +153,7 @@ function __advance_data(params) {
         _.each(params.vars, function(value, key){
             content += "## "+key+"\n\n";
             content += "```javascript\n";
-            content += JSON.stringify(value, undefined, 2);
+            content += JSON.stringify(value, undefined, 2)+'\n';
             content += "```\n\n";
         });
     }
